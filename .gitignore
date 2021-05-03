@@ -372,6 +372,9 @@ MigrationBackup/
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 
+# Rider files
+**/.idea/**/
+
 *.suo
 *.user
 .vs/

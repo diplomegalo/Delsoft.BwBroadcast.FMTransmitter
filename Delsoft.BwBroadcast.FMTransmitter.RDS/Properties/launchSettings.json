@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "Delsoft.BwBroadcast.FMTransmitter.RDS": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
