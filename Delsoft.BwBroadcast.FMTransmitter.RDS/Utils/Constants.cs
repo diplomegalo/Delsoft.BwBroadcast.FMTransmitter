@@ -8,17 +8,17 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils
         {
             public static class Routes
             {
-                public const string SetParameter = "/api/setparameter?id={0}&value={1}";
+                private const string SetParameter = "/api/setparameter?id={0}&value={1}";
 
-                public const string GetParameter = "/api/getparameter?id={0}";
+                private const string GetParameter = "/api/getparameter?id={0}";
 
-                public const string Authenticate = "/api/auth?password={0}";
+                private const string Authenticate = "/api/auth?password={0}";
 
-                public static Uri BuildSetParameterUri(string parameter, string value) => new(string.Format(Routes.SetParameter, parameter, value));
+                public static string BuildSetParameterUri(string parameter, string value) => string.Format(Routes.SetParameter, parameter, value);
 
-                public static Uri BuildGetParameterUri(string parameter) => new(string.Format(GetParameter, parameter));
+                public static string BuildGetParameterUri(string parameter) => string.Format(GetParameter, parameter);
 
-                public static Uri BuildAuthenticateUri(string password) => new(string.Format(Authenticate, password));
+                public static string BuildAuthenticateUri(string password) => string.Format(Authenticate, password);
             }
 
             public static class Parameters

@@ -2,7 +2,7 @@
 
 namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils
 {
-    public class RdsOptions
+    public class NowPlayingOptions
     {
         public string FilePath { get; set; }
         public string FileName { get; set; }

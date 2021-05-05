@@ -14,17 +14,17 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Domain
     {
         private readonly ILogger<RdsDomain> _logger;
         private readonly TransmitterService _transmitterService;
-        private readonly IOptions<RdsOptions> _options;
+        private readonly IOptions<NowPlayingOptions> _options;
         private FileSystemWatcher _watcher;
 
-        public RdsDomain(ILogger<RdsDomain> logger, TransmitterService transmitterService, IOptions<RdsOptions> options)
+        public RdsDomain(ILogger<RdsDomain> logger, TransmitterService transmitterService, IOptions<NowPlayingOptions> options)
         {
             _logger = logger;
             _transmitterService = transmitterService;
             _options = options;
         }
 
-        public string FullPath => $"{_options.Value.FilePath}/{_options.Value.FileName}";
+        public string FullPath => $"{_options.Value.FilePath}\\{_options.Value.FileName}";
 
 
         public void Watch()

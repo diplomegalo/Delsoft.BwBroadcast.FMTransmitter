@@ -18,15 +18,14 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
     public class TransmitterService : ITransmitterService
     {
         private readonly ILogger<TransmitterService> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IOptions<TransmitterOptions> _options;
-        private readonly HttpClient _httpClient;
 
         public TransmitterService(ILogger<TransmitterService> logger, IHttpClientFactory httpClientFactory, IOptions<TransmitterOptions> options)
         {
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
             _options = options;
-            _httpClient = httpClientFactory.CreateClient();
-            _httpClient.BaseAddress = new Uri(_options.Value.Endpoint);
         }
 
         public async Task SetRadioText(string nowPlaying)
@@ -36,8 +35,10 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
                 throw new ArgumentNullException(nameof(nowPlaying));
             }
 
-            var response = await _httpClient.GetAsync<Response>(
+            using var httpClient = _httpClientFactory.CreateClient(_options);
+            var response = await httpClient.GetAsync<Response>(
                 Routes.BuildSetParameterUri(Parameters.RadioText, nowPlaying));
+
             if (!response.Success)
             {
                 _logger.LogError($"Unable to set radio text. Reason : {response.Reason}");
@@ -47,8 +48,10 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
 
         public async Task<IEnumerable<string>> GetRadioText()
         {
-            var httpResponseMessage = await _httpClient.GetAsync(
+            using var httpClient = _httpClientFactory.CreateClient(_options);
+            var httpResponseMessage = await httpClient.GetAsync(
                 Routes.BuildGetParameterUri(Parameters.RadioText));
+
             httpResponseMessage.EnsureSuccessStatusCode();
 
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
