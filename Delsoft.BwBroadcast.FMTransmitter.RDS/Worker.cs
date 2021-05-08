@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Domain;
@@ -25,27 +23,31 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
         {
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
-            try
+            _rdsDomain.Watch();
+            while (!stoppingToken.IsCancellationRequested)
             {
-                _rdsDomain.Watch();
-                while (!stoppingToken.IsCancellationRequested)
+                try
                 {
                     var waitForChange = _rdsDomain.WaitForChange();
 
                     if (waitForChange.ChangeType == WatcherChangeTypes.Changed
                         | waitForChange.ChangeType == WatcherChangeTypes.Created)
                     {
-                        _rdsDomain.SetNowPlaying(stoppingToken);
+                        var nowPlaying = await _rdsDomain.ReadNowPlayingFile(stoppingToken);
+                        _logger.LogInformation($"Worker begin to set now playing: {nowPlaying}");
+                        await _rdsDomain.SetNowPlaying(nowPlaying, stoppingToken).ConfigureAwait(true);
+                        nowPlaying = await _rdsDomain.GetNowPlaying(stoppingToken).ConfigureAwait(true);
+                        _logger.LogInformation($"Current now playing : {nowPlaying}");
                     }
                 }
-            }
-            catch (OperationCanceledException e)
-            {
-                _logger.LogError(e.Message);
-            }
-            catch (Exception e)
-            {
-                _logger.LogCritical(e.Message);
+                catch (OperationCanceledException e)
+                {
+                    _logger.LogError(e.Message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogCritical(e.Message);
+                }
             }
         }
     }

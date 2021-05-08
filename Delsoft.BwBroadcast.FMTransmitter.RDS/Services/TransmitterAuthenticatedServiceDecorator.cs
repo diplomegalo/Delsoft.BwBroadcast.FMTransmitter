@@ -32,25 +32,24 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
             {
                 try
                 {
-                    await _transmitterService.SetRadioText(nowPlaying);
+                    await _transmitterService.SetRadioText(nowPlaying)
+                        .ConfigureAwait(true);
                     break;
                 }
-                catch (Exception e)
+                catch (InvalidOperationException)
                 {
                     retry--;
-                    _logger.LogWarning($"Unable to set radio text. Try to authenticate. Number of retry {retry}");
+                    _logger.LogTrace($"Try to authenticate. Number of retry {retry}");
 
                     var httpClient = _httpClientFactory.CreateClient(_options);
-                    httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password));
-                    Task.Delay(500);
+                    await httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password)).ConfigureAwait(true);
+                    await Task.Delay(500);
                 }
             }
 
             if (retry == 0)
             {
-                var message = $"Unable to set radio text to: {nowPlaying}.";
-                _logger.LogError(message);
-                throw new InvalidOperationException(message);
+                throw new InvalidOperationException($"Unable to set radio text to: {nowPlaying}.");
             }
         }
 
@@ -63,20 +62,18 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
                 {
                     return await _transmitterService.GetRadioText();
                 }
-                catch (Exception e)
+                catch (InvalidOperationException)
                 {
+                    _logger.LogTrace($"Try to authenticate. Number of retry {retry}");
                     retry--;
-                    _logger.LogWarning($"Unable to get radio text. Try to authenticate. Number of retry {retry}");
 
                     var httpClient = _httpClientFactory.CreateClient(_options);
-                    httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password));
-                    Task.Delay(500);
+                    await httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password));
+                    await Task.Delay(500);
                 }
             }
 
-            var message = $"Unable to get radio text to.";
-            _logger.LogError(message);
-            throw new InvalidOperationException(message);
+            throw new InvalidOperationException($"Unable to get radio text to.");
         }
     }
 }

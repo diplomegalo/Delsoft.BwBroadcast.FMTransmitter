@@ -41,7 +41,6 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
 
             if (!response.Success)
             {
-                _logger.LogError($"Unable to set radio text. Reason : {response.Reason}");
                 throw new InvalidOperationException(response.Reason);
             }
         }
@@ -60,11 +59,12 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
             var xDocument = XDocument.Parse(content);
             if (xDocument.Root.Name.LocalName != "response")
             {
-                return Deserialize<ParametersElem>(content).Parameters.Select(parameter => parameter.Value);
+                var parameters = Deserialize<ParametersElem>(content)?.Parameters;
+                var value = parameters?.Select(parameter => parameter.Value);
+                return value;
             }
 
             var response = Deserialize<Response>(content);
-            this._logger.LogError($"Unable to get the radio text value. Reason: {response.Reason}");
             throw new InvalidOperationException(response.Reason);
         }
 

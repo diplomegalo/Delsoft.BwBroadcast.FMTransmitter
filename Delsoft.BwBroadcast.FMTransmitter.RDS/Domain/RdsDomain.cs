@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services;
@@ -13,11 +14,11 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Domain
     public class RdsDomain : IRdsDomain
     {
         private readonly ILogger<RdsDomain> _logger;
-        private readonly TransmitterService _transmitterService;
+        private readonly ITransmitterService _transmitterService;
         private readonly IOptions<NowPlayingOptions> _options;
         private FileSystemWatcher _watcher;
 
-        public RdsDomain(ILogger<RdsDomain> logger, TransmitterService transmitterService, IOptions<NowPlayingOptions> options)
+        public RdsDomain(ILogger<RdsDomain> logger, ITransmitterService transmitterService, IOptions<NowPlayingOptions> options)
         {
             _logger = logger;
             _transmitterService = transmitterService;
@@ -39,24 +40,31 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Domain
             return _watcher.WaitForChanged(WatcherChangeTypes.Changed);
         }
 
-        public async Task SetNowPlaying(CancellationToken stoppingToken)
+        public async Task SetNowPlaying(string nowPlaying, CancellationToken stoppingToken)
         {
-            var nowPlaying = await this.ReadNowPlayingFile(stoppingToken) ?? throw new InvalidOperationException("Unexpected null value in the now playing file.");
+            if (string.IsNullOrWhiteSpace(nowPlaying))
+            {
+                throw new ArgumentNullException(nameof(nowPlaying));
+            }
+
             nowPlaying = nowPlaying.ToUpper();
+            await _transmitterService.SetRadioText(nowPlaying).ConfigureAwait(true);
 
-            _logger.LogInformation($"Worker is changing radio text now playing by {nowPlaying}");
-
-            _transmitterService.SetRadioText(nowPlaying);
+            _logger.LogTrace($"Set now playing: {nowPlaying}");
         }
 
-        private async Task<string> ReadNowPlayingFile(CancellationToken cancellationToken)
+        public async Task<string> GetNowPlaying(CancellationToken stoppingToken)
+            => (await _transmitterService.GetRadioText().ConfigureAwait(true)).FirstOrDefault();
+
+        public async Task<string> ReadNowPlayingFile(CancellationToken cancellationToken)
         {
             var retry = 3;
             while (retry > 0)
             {
                 try
                 {
-                    return await File.ReadAllTextAsync(this.FullPath, cancellationToken);
+                    return await File.ReadAllTextAsync(this.FullPath, cancellationToken)
+                        .ConfigureAwait(true);
                 }
                 catch (Exception)
                 {

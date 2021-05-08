@@ -2,18 +2,19 @@
 
 namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Model
 {
-    [XmlRoot(ElementName = "parameters")]
+    [XmlRoot("parameters")]
     public class ParametersElem
     {
+        [XmlElement("parameter")]
         public Parameter[] Parameters { get; set; }
     }
 
     public class Parameter
     {
-        [XmlAttribute(AttributeName = "id")]
+        [XmlAttribute("id")]
         public string Id { get; set; }
 
-        [XmlAttribute(AttributeName = "value")]
+        [XmlAttribute("value")]
         public string Value { get; set; }
     }
 }
