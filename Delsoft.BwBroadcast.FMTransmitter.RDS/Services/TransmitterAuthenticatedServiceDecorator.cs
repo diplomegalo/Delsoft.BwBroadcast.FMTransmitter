@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
@@ -45,6 +46,18 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
                     await httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password)).ConfigureAwait(true);
                     await Task.Delay(500);
                 }
+                catch (HttpRequestException e)
+                {
+                    if (e.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        _logger.LogTrace($"Try to authenticate. Number of retry {retry}");
+                        retry--;
+
+                        var httpClient = _httpClientFactory.CreateClient(_options);
+                        await httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password));
+                        await Task.Delay(500);
+                    }
+                }
             }
 
             if (retry == 0)
@@ -70,6 +83,18 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
                     var httpClient = _httpClientFactory.CreateClient(_options);
                     await httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password));
                     await Task.Delay(500);
+                }
+                catch (HttpRequestException e)
+                {
+                    if (e.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        _logger.LogTrace($"Try to authenticate. Number of retry {retry}");
+                        retry--;
+
+                        var httpClient = _httpClientFactory.CreateClient(_options);
+                        await httpClient.GetAsync(Routes.BuildAuthenticateUri(_options.Value.Password));
+                        await Task.Delay(500);
+                    }
                 }
             }
 
