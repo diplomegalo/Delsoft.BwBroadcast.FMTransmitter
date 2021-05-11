@@ -1,11 +1,19 @@
 using System;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Domain;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
 {
     public class TrackSplitterTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public TrackSplitterTest(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void Can_Next()
         {
@@ -46,15 +54,15 @@ namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
             var target = new TrackSplitter();
             var nowPlaying = "123456789";
             target.Init(nowPlaying);
-            Console.WriteLine(target.Next()); // 12345678
-            Console.WriteLine(target.Next()); // 9 123456
-            Console.WriteLine(target.Next()); // 789 1234
-            Console.WriteLine(target.Next()); // 56789 12
-            Console.WriteLine(target.Next()); // 3456789_
+            _testOutputHelper.WriteLine(target.Next()); // 12345678
+            _testOutputHelper.WriteLine(target.Next()); // 9 123456
+            _testOutputHelper.WriteLine(target.Next()); // 789 1234
+            _testOutputHelper.WriteLine(target.Next()); // 56789 12
+            _testOutputHelper.WriteLine(target.Next()); // 3456789_
             var expected = "12345678";
 
             // Act
-            var actual = target.Next(); // 3456789
+            var actual = target.Next();
 
             // Assert
             Assert.Equal(expected, actual);
