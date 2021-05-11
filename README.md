@@ -30,7 +30,7 @@ The authentication is done when the success value of response of `setParameter` 
 
 # FM Transmitter Mock
 
-This is a very simple mock the FM Transmitter web api. This mock api is based on node.js and use express js minimalist web server. 
+This is a very simple mock of the FM Transmitter web api. This mock api is based on node.js and use the minimalist web server express js . 
 
 > The authentication is always set to false before calling `getParameter` or `setParameter`.
 
