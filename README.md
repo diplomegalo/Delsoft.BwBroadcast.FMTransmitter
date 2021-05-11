@@ -27,3 +27,16 @@ The transmitter options can be set in the appSettings.json file in the `Transmit
 The authentication is done when the success value of response of `setParameter` or `getParmeter` call is `false`. 
 
 > If authentication fail, the system will retry once.
+
+# FM Transmitter Mock
+
+This is a very simple mock the FM Transmitter web api. This mock api is based on node.js and use express js minimalist web server. 
+
+> The authentication is always set to false before calling `getParameter` or `setParameter`.
+
+## Run mock
+
+To start the server you should run `npm start` command.
+
+> Don't forget to run `npm install` the first time.
+
