@@ -18,7 +18,7 @@ namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
         public void Can_Next()
         {
             // Arrange
-            var target = new TrackSplitter();
+            var target = new TrackSplitter(8);
             var nowPlaying = "test";
             target.Init(nowPlaying);
             var expected = nowPlaying;
@@ -35,7 +35,7 @@ namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
         public void Can_First_Next()
         {
             // Arrange
-            var target = new TrackSplitter();
+            var target = new TrackSplitter(8);
             var nowPlaying = "JUSTIN TIMBERLAKE - CRY ME A RIVER";
             target.Init(nowPlaying);
             var expected = "JUSTIN T";
@@ -51,7 +51,7 @@ namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
         public void Can_Next_Complete_Round_Trip()
         {
             // Arrange
-            var target = new TrackSplitter();
+            var target = new TrackSplitter(8);
             var nowPlaying = "123456789";
             target.Init(nowPlaying);
             _testOutputHelper.WriteLine(target.Next()); // 12345678

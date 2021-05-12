@@ -4,7 +4,12 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Domain
 {
     public class TrackSplitter
     {
-        private const int MaxLength = 8;
+        private int MaxLength { get; }
+
+        public TrackSplitter(int maxLength)
+        {
+            this.MaxLength = maxLength;
+        }
 
         private string _nowPlaying;
         private int startIndex;
