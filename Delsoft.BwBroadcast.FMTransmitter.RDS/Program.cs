@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Domain;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Data;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -28,18 +27,21 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
                     services.AddHostedService<Worker>();
                     services.AddHttpClient();
 
-                    services.AddTransient<IRdsDomain, RdsDomain>();
+                    services.AddTransient<IRds, Services.Rds>();
                     services.AddTransient<TransmitterService>();
+                    services.AddTransient<INowPlayingTrack, NowPlayingTrack>();
+                    services.AddTransient<INowPlayingFile, NowPlayingFile>();
 
-                    services.Configure<NowPlayingOptions>(hostContext.Configuration.GetSection("NowPlaying"));
-                    services.Configure<TransmitterOptions>(hostContext.Configuration.GetSection("Transmitter"));
+                    services.Configure<NowPlayingFileOptions>(hostContext.Configuration.GetSection("NowPlayingFile"));
+                    services.Configure<TransmitterServiceOptions>(hostContext.Configuration.GetSection("TransmitterService"));
+                    services.Configure<NowPlayingTrackOptions>(hostContext.Configuration.GetSection("NowPlayingTrack"));
 
                     services.AddTransient<ITransmitterService>(provider =>
                         new TransmitterAuthenticatedServiceDecorator(
                             provider.GetRequiredService<ILogger<TransmitterAuthenticatedServiceDecorator>>(),
                             provider.GetRequiredService<IHttpClientFactory>(),
                             provider.GetRequiredService<TransmitterService>(),
-                            provider.GetRequiredService<IOptions<TransmitterOptions>>()));
+                            provider.GetRequiredService<IOptions<TransmitterServiceOptions>>()));
                 });
     }
 }

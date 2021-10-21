@@ -2,14 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Domain
+namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Data
 {
-    public interface IRdsDomain
+    public interface INowPlayingFile
     {
         void Watch();
         WaitForChangedResult WaitForChange();
-        Task SetNowPlaying(string nowPlaying, CancellationToken stoppingToken);
-        Task<string> GetNowPlaying(CancellationToken stoppingToken);
         Task<string> ReadNowPlayingFile(CancellationToken cancellationToken);
     }
 }

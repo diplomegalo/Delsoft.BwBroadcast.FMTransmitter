@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
+namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter
 {
     public interface ITransmitterService
     {

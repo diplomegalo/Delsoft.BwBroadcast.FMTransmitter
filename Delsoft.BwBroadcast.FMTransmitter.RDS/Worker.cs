@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Domain;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -11,33 +11,47 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IRdsDomain _rdsDomain;
+        private readonly IRds _rds;
 
-        public Worker(ILogger<Worker> logger, IRdsDomain rdsDomain)
+        public Worker(ILogger<Worker> logger, IRds rds)
         {
             _logger = logger;
-            _rdsDomain = rdsDomain;
+            _rds = rds;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("RDS Service running at: {time}", DateTimeOffset.Now);
+            CancellationTokenSource token = await _rds.SetNowPlaying(cancellationToken);
 
-            _rdsDomain.Watch();
-            while (!stoppingToken.IsCancellationRequested)
+            cancellationToken.Register(() =>
+            {
+                _logger.LogTrace($"Cancelation");
+                
+                token.Cancel();
+                token.Dispose();   
+            });
+            
+            _rds.Watch();
+            while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    var waitForChange = _rdsDomain.WaitForChange();
+                    var waitForChange = _rds.WaitForChange();
 
                     if (waitForChange.ChangeType == WatcherChangeTypes.Changed
                         | waitForChange.ChangeType == WatcherChangeTypes.Created)
                     {
-                        var nowPlaying = await _rdsDomain.ReadNowPlayingFile(stoppingToken);
-                        _logger.LogInformation($"Worker begin to set now playing: {nowPlaying}");
-                        await _rdsDomain.SetNowPlaying(nowPlaying, stoppingToken).ConfigureAwait(true);
-                        nowPlaying = await _rdsDomain.GetNowPlaying(stoppingToken).ConfigureAwait(true);
-                        _logger.LogInformation($"Current now playing : {nowPlaying}");
+                        token?.Cancel();
+
+                        _logger.LogTrace($"Worker begin to set now playing");
+
+                        token = await _rds.SetNowPlaying(cancellationToken).ConfigureAwait(true);
+
+                        _logger.LogTrace($"Worker end set now playing");
+
+                        _logger.LogInformation(
+                            $"Current now playing : {await _rds.GetNowPlaying().ConfigureAwait(true)}");
                     }
                 }
                 catch (OperationCanceledException e)

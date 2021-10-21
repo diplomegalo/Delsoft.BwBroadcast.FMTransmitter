@@ -10,27 +10,27 @@ app.get("/", (req, res) => res.send("Hello World"));
 
 // set parameters
 app.get("/api/setparameter*", (req, res) => {
-    const response = authenticated
-        ? "<response success='true'/>"
-        : successFalse;
+    if(!authenticated){
+        res.status(401).send();
+    }
 
     nowPlaying = req.query.value
     authenticated = false;
 
     res.contentType("application/xml");
-    res.send(response);
+    res.send("<response success='true'/>");
 });
 
 // get parameters
 app.get("/api/getparameter*", (req, res) => {
-    const response = authenticated
-        ? `<parameters><parameter id='rds.dsn[1].psn[0].rt' value='${nowPlaying}'/></parameters>`
-        : successFalse;
+    if(!authenticated){
+        res.status(401).send();
+    }
 
     authenticated = false;
 
     res.contentType("application/xml");
-    res.send(response);
+    res.send(`<parameters><parameter id='rds.dsn[1].psn[0].rt' value='${nowPlaying}'/></parameters>`);
 });
 
 app.get("/api/auth", (req, res) => {
