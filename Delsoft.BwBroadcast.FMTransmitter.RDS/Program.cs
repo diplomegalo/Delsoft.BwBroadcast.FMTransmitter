@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Domain;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,8 +25,9 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
                     services.AddHostedService<Worker>();
                     services.AddHttpClient();
 
-                    services.AddTransient<IRdsDomain, RdsDomain>();
+                    services.AddTransient<IRDS, Services.RDS>();
                     services.AddTransient<TransmitterService>();
+                    services.AddTransient<INowPlayingTrack, NowPlayingTrack>();
 
                     services.Configure<NowPlayingOptions>(hostContext.Configuration.GetSection("NowPlaying"));
                     services.Configure<TransmitterOptions>(hostContext.Configuration.GetSection("Transmitter"));

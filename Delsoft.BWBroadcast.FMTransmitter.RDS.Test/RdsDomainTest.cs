@@ -1,6 +1,7 @@
 ﻿using System.Threading;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Domain;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,24 +19,20 @@ namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
             // Arrange
             var actual = string.Empty;
             
-            const string targetParam = "éèàù";
-            const string expected = "EEAU";
+            const string track = "EEAU";
             
-            var logger = Mock.Of<ILogger<RdsDomain>>();
+            var logger = Mock.Of<ILogger<BwBroadcast.FMTransmitter.RDS.Services.RDS>>();
             var options = Mock.Of<IOptions<NowPlayingOptions>>();
+            var trackSplitter = Mock.Of<INowPlayingTrack>();
+            var transmitterService = Mock.Of<ITransmitterService>();
             
-            var transmitterService = new Mock<ITransmitterService>();
-            transmitterService
-                .Setup(s => s.SetRadioText(It.IsAny<string>()))
-                .Callback<string>(param => actual = param);
-            
-            var target = new RdsDomain(logger, transmitterService.Object, options);
+            var target = new BwBroadcast.FMTransmitter.RDS.Services.RDS(logger, transmitterService, options, trackSplitter);
             
             // Act
-            target.SetNowPlaying(targetParam, CancellationToken.None);
+            target.SetNowPlaying(string.Empty, CancellationToken.None);
             
             // Assert
-            actual.ShouldBe(expected);
+            Mock.Get(transmitterService).Verify(v => v.SetRadioText(track), Times.Once);
         }
     }
 }

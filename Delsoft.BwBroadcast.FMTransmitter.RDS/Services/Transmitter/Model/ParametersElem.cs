@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Model
+namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter.Model
 {
     [XmlRoot("parameters")]
     public class ParametersElem

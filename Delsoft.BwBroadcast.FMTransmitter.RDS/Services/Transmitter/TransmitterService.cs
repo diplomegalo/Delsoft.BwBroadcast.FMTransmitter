@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Model;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter.Model;
 using Microsoft.Extensions.Logging;
 using static Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Constants.Transmitter;
 
-namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
+namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter
 {
     public class TransmitterService : ITransmitterService
     {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using static Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Constants.Transmitter;
 
-namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
+namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter
 {
     public class TransmitterAuthenticatedServiceDecorator : ITransmitterService
     {

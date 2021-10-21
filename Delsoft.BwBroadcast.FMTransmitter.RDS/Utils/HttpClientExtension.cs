@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Model;
 using Microsoft.Extensions.Options;
 
 namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils
