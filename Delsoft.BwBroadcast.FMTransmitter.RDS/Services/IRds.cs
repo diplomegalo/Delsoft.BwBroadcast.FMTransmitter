@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
 {
-    public interface IRDS
+    public interface IRds
     {
         void Watch();
         WaitForChangedResult WaitForChange();

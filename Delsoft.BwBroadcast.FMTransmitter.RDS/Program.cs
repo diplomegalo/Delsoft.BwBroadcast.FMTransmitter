@@ -26,7 +26,7 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
                     services.AddHostedService<Worker>();
                     services.AddHttpClient();
 
-                    services.AddTransient<IRDS, Services.RDS>();
+                    services.AddTransient<IRds, Services.Rds>();
                     services.AddTransient<TransmitterService>();
                     services.AddTransient<INowPlayingTrack, NowPlayingTrack>();
 

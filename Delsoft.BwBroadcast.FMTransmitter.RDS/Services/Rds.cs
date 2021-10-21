@@ -1,26 +1,22 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Data;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
 {
-    public class RDS : IRDS
+    public class Rds : IRds
     {
-        private readonly ILogger<RDS> _logger;
+        private readonly ILogger<Rds> _logger;
         private readonly ITransmitterService _transmitterService;
         private readonly INowPlayingTrack _nowPlayingTrack;
         private readonly INowPlayingFile _nowPlayingFile;
 
-        public RDS(ILogger<RDS> logger, ITransmitterService transmitterService, INowPlayingTrack nowPlayingTrack, INowPlayingFile nowPlayingFile)
+        public Rds(ILogger<Rds> logger, ITransmitterService transmitterService, INowPlayingTrack nowPlayingTrack, INowPlayingFile nowPlayingFile)
         {
             _logger = logger;
             _transmitterService = transmitterService;
@@ -40,8 +36,10 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
         
         public async Task SetNowPlaying(CancellationToken cancellationToken)
         {
-            var nowPlaying = _nowPlayingTrack.StartWith(await _nowPlayingFile.ReadNowPlayingFile(cancellationToken));
-            await _transmitterService.SetRadioText(_nowPlayingTrack.NowPlaying).ConfigureAwait(true);
+            await _transmitterService.SetRadioText(
+                _nowPlayingTrack.StartWith(
+                    await _nowPlayingFile.ReadNowPlayingFile(cancellationToken)));
+         
             _logger.LogTrace($"Radio text set with: {_nowPlayingTrack.NowPlaying}");
         }
         

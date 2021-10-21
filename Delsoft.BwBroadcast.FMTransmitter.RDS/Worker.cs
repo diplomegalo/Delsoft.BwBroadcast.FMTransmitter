@@ -11,9 +11,9 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IRDS _rds;
+        private readonly IRds _rds;
 
-        public Worker(ILogger<Worker> logger, IRDS rds)
+        public Worker(ILogger<Worker> logger, IRds rds)
         {
             _logger = logger;
             _rds = rds;
