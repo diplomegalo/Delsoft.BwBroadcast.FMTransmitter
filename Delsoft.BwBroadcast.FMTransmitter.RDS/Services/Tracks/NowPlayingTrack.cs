@@ -56,16 +56,26 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks
 
             if (this.Track.Length - _startIndex >= MaxLength)
             {
-                this.NowPlaying = this.Track.Substring(_startIndex, MaxLength);
+                this.NowPlaying = this.Track
+                    .Substring(_startIndex, MaxLength)
+                    .ToUpper()
+                    .CleanAccent();
+                
                 this._startIndex += MaxLength;
+                
                 return this.NowPlaying;
             }
 
-            var result = this.Track.Substring(_startIndex, this.Track.Length - _startIndex);
-            var offset = MaxLength - result.Length - 1;
-
-            this.NowPlaying = $" {result} {this.NowPlaying[..offset]}";
-
+            var tmp = this.Track
+                .Substring(_startIndex, this.Track.Length - _startIndex)
+                .ToUpper()
+                .CleanAccent();
+            var offset = MaxLength - tmp.Length - 1;
+            
+            tmp = $"{tmp} {this.Track[..offset]}";
+            
+            this.NowPlaying = tmp.ToUpper().CleanAccent();
+            
             _startIndex = offset;
 
             return this.NowPlaying;

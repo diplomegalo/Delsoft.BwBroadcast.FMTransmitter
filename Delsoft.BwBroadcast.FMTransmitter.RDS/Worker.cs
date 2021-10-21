@@ -26,8 +26,10 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
 
             cancellationToken.Register(() =>
             {
+                _logger.LogTrace($"Cancelation");
+                
                 token.Cancel();
-                token.Dispose();    
+                token.Dispose();   
             });
             
             _rds.Watch();

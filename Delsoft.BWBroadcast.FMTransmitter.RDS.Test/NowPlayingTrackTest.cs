@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks;
 using Shouldly;
 using Xunit;
@@ -114,18 +115,29 @@ namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
             var target = new NowPlayingTrack(8);
             const string trackName = "123456789";
             target.StartWith(trackName);
-            _testOutputHelper.WriteLine(target.Next()); // 12345678
-            _testOutputHelper.WriteLine(target.Next()); // 9 123456
-            _testOutputHelper.WriteLine(target.Next()); // 789 1234
-            _testOutputHelper.WriteLine(target.Next()); // 56789 12
-            _testOutputHelper.WriteLine(target.Next()); // 3456789
-            _testOutputHelper.WriteLine(target.Next()); //  
-            const string expected = "12345678";
-
+            var actual = new List<string>();
+            var expected = new string[]
+            {
+                "12345678",
+                "9 123456",
+                "789 1234",
+                "56789 12",
+                "3456789 ",
+                "12345678"
+            };
+            
             // Act
-            var actual = target.NowPlaying;
+            for (var i = 0; i < 6; i++)
+            {
+                actual.Add(target.Next());
+            }
 
             // Assert
+            for (var i = 0; i < 6; i++)
+            {
+                Assert.Equal(expected[i], actual[i]);
+            }
+            
             Assert.Equal(expected, actual);
         }
 
