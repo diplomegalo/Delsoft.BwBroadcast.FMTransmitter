@@ -8,7 +8,7 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
     {
         void Watch();
         WaitForChangedResult WaitForChange();
-        Task SetNowPlaying(CancellationToken cancellationToken);
+        Task<CancellationTokenSource> SetNowPlaying(CancellationToken cancellationToken);
         Task<string> GetNowPlaying();
 
     }

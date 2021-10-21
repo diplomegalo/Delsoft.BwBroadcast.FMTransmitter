@@ -22,7 +22,16 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("RDS Service running at: {time}", DateTimeOffset.Now);
+            CancellationTokenSource token = await _rds.SetNowPlaying(cancellationToken);
 
+            cancellationToken.Register(() =>
+            {
+                _logger.LogTrace($"Cancelation");
+                
+                token.Cancel();
+                token.Dispose();   
+            });
+            
             _rds.Watch();
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -33,13 +42,16 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
                     if (waitForChange.ChangeType == WatcherChangeTypes.Changed
                         | waitForChange.ChangeType == WatcherChangeTypes.Created)
                     {
+                        token?.Cancel();
+
                         _logger.LogTrace($"Worker begin to set now playing");
-                        
-                        await _rds.SetNowPlaying(cancellationToken).ConfigureAwait(true);
-                        
+
+                        token = await _rds.SetNowPlaying(cancellationToken).ConfigureAwait(true);
+
                         _logger.LogTrace($"Worker end set now playing");
-                        
-                        _logger.LogInformation($"Current now playing : {await _rds.GetNowPlaying().ConfigureAwait(true)}");
+
+                        _logger.LogInformation(
+                            $"Current now playing : {await _rds.GetNowPlaying().ConfigureAwait(true)}");
                     }
                 }
                 catch (OperationCanceledException e)

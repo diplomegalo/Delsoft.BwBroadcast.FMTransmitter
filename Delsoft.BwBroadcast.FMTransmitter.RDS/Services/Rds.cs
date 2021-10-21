@@ -34,13 +34,35 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
             return _nowPlayingFile.WaitForChange();
         }
         
-        public async Task SetNowPlaying(CancellationToken cancellationToken)
+        public async Task<CancellationTokenSource> SetNowPlaying(CancellationToken cancellationToken)
         {
-            await _transmitterService.SetRadioText(
-                _nowPlayingTrack.StartWith(
-                    await _nowPlayingFile.ReadNowPlayingFile(cancellationToken)));
-         
+            var nowPlaying = _nowPlayingTrack.StartWith(
+                await _nowPlayingFile.ReadNowPlayingFile(cancellationToken));
+            
+            await _transmitterService.SetRadioText(nowPlaying);
+
             _logger.LogTrace($"Radio text set with: {_nowPlayingTrack.NowPlaying}");
+            
+            var cts = new CancellationTokenSource();
+            
+            if (_nowPlayingTrack.IsTooLarge())
+            {
+                ThreadPool.QueueUserWorkItem(this.SetNowPlaying, cts.Token);
+            }
+            
+            return cts;
+        }
+
+        private void SetNowPlaying(object context)
+        {
+            var cancellationToken = (CancellationToken)context;
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                Thread.Sleep(5000);
+                _transmitterService.SetRadioText(_nowPlayingTrack.Next());
+                
+                _logger.LogTrace($"Radio text set with: {_nowPlayingTrack.NowPlaying}");
+            }
         }
         
         public async Task<string> GetNowPlaying()
