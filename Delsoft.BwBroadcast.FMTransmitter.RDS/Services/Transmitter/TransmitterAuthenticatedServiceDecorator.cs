@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Extensions;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
