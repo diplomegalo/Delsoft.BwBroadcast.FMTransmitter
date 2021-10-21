@@ -33,11 +33,11 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
                     if (waitForChange.ChangeType == WatcherChangeTypes.Changed
                         | waitForChange.ChangeType == WatcherChangeTypes.Created)
                     {
-                        var nowPlaying = await _rdsDomain.ReadNowPlayingFile(stoppingToken);
-                        _logger.LogInformation($"Worker begin to set now playing: {nowPlaying}");
-                        await _rdsDomain.SetNowPlaying(nowPlaying, stoppingToken).ConfigureAwait(true);
-                        nowPlaying = await _rdsDomain.GetNowPlaying(stoppingToken).ConfigureAwait(true);
-                        _logger.LogInformation($"Current now playing : {nowPlaying}");
+                        _logger.LogDebug($"Worker begin to set now playing");
+                        await _rdsDomain.SetNowPlaying(await _rdsDomain.ReadNowPlayingFile(stoppingToken), stoppingToken).ConfigureAwait(true);
+                        _logger.LogDebug($"Worker end set now playing");
+                        
+                        _logger.LogInformation($"Current now playing : {await _rdsDomain.GetNowPlaying(stoppingToken).ConfigureAwait(true)}");
                     }
                 }
                 catch (OperationCanceledException e)

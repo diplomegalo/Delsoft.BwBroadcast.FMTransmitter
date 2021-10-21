@@ -46,10 +46,11 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Domain
             {
                 throw new ArgumentNullException(nameof(nowPlaying));
             }
-
+            
             nowPlaying = nowPlaying
                 .CleanAccent()
-                .ToUpper();
+                .ToUpper()[..32];
+            
             await _transmitterService.SetRadioText(nowPlaying).ConfigureAwait(true);
 
             _logger.LogTrace($"Set now playing: {nowPlaying}");
