@@ -6,5 +6,6 @@
         string Next();
         string Track { get; }
         string NowPlaying { get; }
+        bool IsTooLarge();
     }
 }

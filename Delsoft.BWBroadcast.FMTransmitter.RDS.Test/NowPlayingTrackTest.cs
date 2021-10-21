@@ -128,5 +128,18 @@ namespace Delsoft.BWBroadcast.FMTransmitter.RDS.Test
             // Assert
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void Can_Is_Too_Large()
+        {
+            var target = new NowPlayingTrack(8);
+            target.StartWith("123465789");
+            
+            // Act
+            var actual = target.IsTooLarge();
+            
+            // Assert
+            Assert.True(actual);
+        }
     }
 }

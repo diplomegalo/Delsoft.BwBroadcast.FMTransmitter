@@ -23,18 +23,20 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks
         {
         }
 
+        public bool IsTooLarge() => this.Track.Length > MaxLength;
+
         public string StartWith(string trackName)
         {
             if (string.IsNullOrWhiteSpace(trackName))
             {
                 throw new ArgumentException("Unexpected null or empty value.", nameof(trackName));
             }
-            
+
             this.Track = trackName;
-            this.NowPlaying = trackName.Length > MaxLength 
+            this.NowPlaying = trackName.Length > MaxLength
                 ? trackName.ToUpper().CleanAccent()[..MaxLength]
                 : trackName.ToUpper().CleanAccent();
-            
+
             this._startIndex = 0;
 
             return NowPlaying;
@@ -58,14 +60,14 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks
                 this._startIndex += MaxLength;
                 return this.NowPlaying;
             }
-            
+
             var result = this.Track.Substring(_startIndex, this.Track.Length - _startIndex);
-            var offset =  MaxLength - result.Length - 1;
+            var offset = MaxLength - result.Length - 1;
 
             this.NowPlaying = $" {result} {this.NowPlaying[..offset]}";
-            
+
             _startIndex = offset;
-            
+
             return this.NowPlaying;
         }
     }
