@@ -1,4 +1,4 @@
-﻿namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils
+﻿namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options
 {
     public class TrackSplitterOptions
     {

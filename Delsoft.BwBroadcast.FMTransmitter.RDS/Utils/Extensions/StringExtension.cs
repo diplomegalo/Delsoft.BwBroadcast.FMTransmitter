@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils
+namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Extensions
 {
     public static class StringExtension
     {

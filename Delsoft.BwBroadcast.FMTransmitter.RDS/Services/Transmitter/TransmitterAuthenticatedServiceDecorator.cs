@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using static Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Constants.Transmitter;
@@ -16,9 +16,9 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter
         private readonly ILogger<TransmitterAuthenticatedServiceDecorator> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly TransmitterService _transmitterService;
-        private readonly IOptions<TransmitterOptions> _options;
+        private readonly IOptions<TransmitterServiceOptions> _options;
 
-        public TransmitterAuthenticatedServiceDecorator(ILogger<TransmitterAuthenticatedServiceDecorator> logger, IHttpClientFactory httpClientFactory, TransmitterService transmitterService, IOptions<TransmitterOptions> options)
+        public TransmitterAuthenticatedServiceDecorator(ILogger<TransmitterAuthenticatedServiceDecorator> logger, IHttpClientFactory httpClientFactory, TransmitterService transmitterService, IOptions<TransmitterServiceOptions> options)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;

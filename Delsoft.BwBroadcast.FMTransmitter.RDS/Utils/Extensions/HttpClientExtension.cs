@@ -4,9 +4,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options;
 using Microsoft.Extensions.Options;
 
-namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils
+namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Extensions
 {
     public static class HttpClientExtension
     {
@@ -20,7 +21,7 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Utils
             return (TReturn)new XmlSerializer(typeof(TReturn)).Deserialize(reader);
         }
 
-        public static HttpClient CreateClient(this IHttpClientFactory httpClientFactory, IOptions<TransmitterOptions> options)
+        public static HttpClient CreateClient(this IHttpClientFactory httpClientFactory, IOptions<TransmitterServiceOptions> options)
         {
             var httpClient = httpClientFactory.CreateClient();
             httpClient.BaseAddress = new Uri(options.Value.Endpoint);

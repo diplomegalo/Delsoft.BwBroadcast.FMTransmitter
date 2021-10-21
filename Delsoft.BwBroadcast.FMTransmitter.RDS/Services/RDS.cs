@@ -3,9 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Data;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -15,61 +17,35 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services
     {
         private readonly ILogger<RDS> _logger;
         private readonly ITransmitterService _transmitterService;
-        private readonly IOptions<NowPlayingOptions> _options;
         private readonly INowPlayingTrack _nowPlayingTrack;
-        private FileSystemWatcher _watcher;
+        private readonly INowPlayingFile _nowPlayingFile;
 
-        public RDS(ILogger<RDS> logger, ITransmitterService transmitterService, IOptions<NowPlayingOptions> options, INowPlayingTrack nowPlayingTrack)
+        public RDS(ILogger<RDS> logger, ITransmitterService transmitterService, INowPlayingTrack nowPlayingTrack, INowPlayingFile nowPlayingFile)
         {
             _logger = logger;
             _transmitterService = transmitterService;
-            _options = options;
             _nowPlayingTrack = nowPlayingTrack;
+            _nowPlayingFile = nowPlayingFile;
         }
-
-        private string FullPath => $"{_options.Value.FilePath}\\{_options.Value.FileName}";
 
         public void Watch()
         {
-            _logger.LogTrace($"Worker begins to watch on {this.FullPath}");
-            
-            _watcher = new FileSystemWatcher(_options.Value.FilePath) { Filter = _options.Value.FileName };
+            _nowPlayingFile.Watch();
         }
 
         public WaitForChangedResult WaitForChange()
         {
-            _logger.LogTrace($"Worker waits for file name {_options.Value.FileName} change.");
-            
-            return _watcher.WaitForChanged(WatcherChangeTypes.Changed);
+            return _nowPlayingFile.WaitForChange();
         }
+        
         public async Task SetNowPlaying(CancellationToken cancellationToken)
         {
-            _nowPlayingTrack.StartWith(await ReadNowPlayingFile(cancellationToken));
+            var nowPlaying = _nowPlayingTrack.StartWith(await _nowPlayingFile.ReadNowPlayingFile(cancellationToken));
             await _transmitterService.SetRadioText(_nowPlayingTrack.NowPlaying).ConfigureAwait(true);
             _logger.LogTrace($"Radio text set with: {_nowPlayingTrack.NowPlaying}");
         }
         
         public async Task<string> GetNowPlaying()
             => (await _transmitterService.GetRadioText().ConfigureAwait(true)).FirstOrDefault();
-        
-        private async Task<string> ReadNowPlayingFile(CancellationToken cancellationToken)
-        {
-            var retry = 3;
-            while (retry > 0)
-            {
-                try
-                {
-                    return await File.ReadAllTextAsync(this.FullPath, cancellationToken)
-                        .ConfigureAwait(true);
-                }
-                catch (Exception)
-                {
-                    await Task.Delay(1000, cancellationToken);
-                    retry--;
-                }
-            }
-
-            throw new InvalidOperationException("Unable to read radio text.");
-        }
     }
 }

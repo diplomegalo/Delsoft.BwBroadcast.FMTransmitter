@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,6 +9,8 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter.Model;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Extensions;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Options;
 using Microsoft.Extensions.Logging;
 using static Delsoft.BwBroadcast.FMTransmitter.RDS.Utils.Constants.Transmitter;
 
@@ -19,9 +20,9 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter
     {
         private readonly ILogger<TransmitterService> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IOptions<TransmitterOptions> _options;
+        private readonly IOptions<TransmitterServiceOptions> _options;
 
-        public TransmitterService(ILogger<TransmitterService> logger, IHttpClientFactory httpClientFactory, IOptions<TransmitterOptions> options)
+        public TransmitterService(ILogger<TransmitterService> logger, IHttpClientFactory httpClientFactory, IOptions<TransmitterServiceOptions> options)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
