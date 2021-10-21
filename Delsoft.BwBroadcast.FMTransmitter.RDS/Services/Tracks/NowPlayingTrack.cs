@@ -18,7 +18,7 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks
             this.MaxLength = maxLength;
         }
 
-        public NowPlayingTrack(IOptions<TrackSplitterOptions> options)
+        public NowPlayingTrack(IOptions<NowPlayingTrackOptions> options)
             : this(options.Value.MaxLength)
         {
         }

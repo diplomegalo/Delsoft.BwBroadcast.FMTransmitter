@@ -1,4 +1,5 @@
 using System.Net.Http;
+using Delsoft.BwBroadcast.FMTransmitter.RDS.Data;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Tracks;
 using Delsoft.BwBroadcast.FMTransmitter.RDS.Services.Transmitter;
@@ -29,9 +30,11 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
                     services.AddTransient<IRds, Services.Rds>();
                     services.AddTransient<TransmitterService>();
                     services.AddTransient<INowPlayingTrack, NowPlayingTrack>();
+                    services.AddTransient<INowPlayingFile, NowPlayingFile>();
 
                     services.Configure<NowPlayingFileOptions>(hostContext.Configuration.GetSection("NowPlayingFile"));
                     services.Configure<TransmitterServiceOptions>(hostContext.Configuration.GetSection("TransmitterService"));
+                    services.Configure<NowPlayingTrackOptions>(hostContext.Configuration.GetSection("NowPlayingTrack"));
 
                     services.AddTransient<ITransmitterService>(provider =>
                         new TransmitterAuthenticatedServiceDecorator(
