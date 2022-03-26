@@ -21,7 +21,7 @@ namespace Delsoft.BwBroadcast.FMTransmitter.RDS
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseWindowsService()
+                .UseWindowsService(options => options.ServiceName = "FMTransmitter.RDS")
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
