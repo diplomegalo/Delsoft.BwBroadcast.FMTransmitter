@@ -1,15 +1,67 @@
 # Delsoft.BwBroadcast.FMTransmitter
 
-This Windows service allows to use RDS feature of the FM Transmitter from the BW Broadcast brand. The current version can set radio text value of the BwBroadcast FM Transmitter through the api. This value is extract from a file when it's created or modified.
+Windows service use to send _now playing_ track through RDS. This service use specifically the BW Broadcast FMTransmitter API. Track information is read from a file and send through the BW Broadcast FM Transmitter API every time the file is changing.
 
-## Now Playing file.
+This service is written in .net 6.0. 
 
-The _now playing_ file contains the information to display on device. 
+# Install service
 
-The service waits for creation or update event of the the _now playing_ file. The file path can be configured in the appSettings.json by setting the value of the `NowPlaying` configuration:
+Download the `Delsoft.BwBroadcast.FMTransmitter.RDS.exe` file from release and store it to the local machine where the _now playing_ file is located. Be sure the application has an access on the _now playing_ file.
 
-* `FilePath`: the path to the directory.
-* `FileName`: the name of the file. 
+Create and edit the `appSettings.json` file to configure the application. Below, an example of the config content:
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Warning"
+    },
+    "EventLog": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft.Hosting.Lifetime": "Information"
+      }
+    }
+  },
+  "NowPlayingFile": {
+    "FilePath" : "C:\\Temp",
+    "FileName": "NowPlaying.txt"
+  },
+    "FilePath": "",
+  "TransmitterService": {
+    "Endpoint": "http://localhost:3000/",
+    "Password": "plop"
+  },
+  "NowPlayingTrack": {
+    "MaxLength": 64
+  }
+}
+
+```
+
+Install the service by executing the following command where 
+- _FMTransmitter.RDS_ is the name of the service
+- _C:\Path\To\App.exe_ is the path where the executable file is located
+- _C:\Other\Path_ is the path where the `appSettings.json` file is located.
+
+```shell
+sc.exe create "FMTransmitter.RDS" binpath="C:\Path\To\App.exe --contentRoot C:\Other\Path"
+```
+
+> Be sure you have the sufficent rights to execute this command. See [documentation](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/sc-create) to find more informations.
+
+# Configuration
+
+The `appSettings.json` file contains information about the configuration. This configuration is load when the service is started. You have to restart the service to reload configuration, for example,  after modifications. 
+
+## `NowPlayingFile` section.
+
+This section contains configuration about the _now playing_ file. The service waits for creation or update event of the the _now playing_ file. The file path and name can be configured :
+
+- `FilePath`: the path to the directory.
+- `FileName`: the name of the file. 
 
 Once the watcher detects modification, the file is read and data are send to the FM Transmitter through its web api.
 
