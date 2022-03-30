@@ -52,6 +52,14 @@ sc.exe create "FMTransmitter.RDS" binpath="C:\Path\To\App.exe --contentRoot C:\O
 
 > Be sure you have the sufficent rights to execute this command. See [documentation](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/sc-create) to find more informations.
 
+# Uninstall
+
+To uninstall the service, run the following command
+
+```shell
+sc.exe delete "FMTransmitter.RDS"
+```
+
 # Configuration
 
 The `appSettings.json` file contains information about the configuration. This configuration is load when the service is started. You have to restart the service to reload configuration, for example,  after modifications. 
